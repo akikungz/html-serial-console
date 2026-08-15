@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Serial Terminal</title>
+  <meta name="description" content="Zero-dependency browser-based serial terminal. Connect to Arduino, ESP32, and other serial devices directly from your browser using the Web Serial API. Features ANSI color support, hex inspector, macros, and hardware signal control." />
   
   <!-- Offline System Fonts & CSS (Zero External CDN Dependencies) -->
   <style>
@@ -828,6 +829,9 @@
 
       /** @type {string} Accumulated plain-text session log buffer */
       let logBuffer = "";
+
+      /** @type {number} Maximum log buffer size in bytes (~10MB) to prevent unbounded memory growth */
+      const MAX_LOG_BUFFER_SIZE = 10 * 1024 * 1024;
       
       /** @type {boolean} DTR pin signal state */
       let dtrState = false;
@@ -970,6 +974,9 @@
 
           /** @type {boolean} Auto-scroll to bottom on new output */
           this.autoScroll = true;
+
+          /** @type {string} Buffer for incomplete ANSI escape sequences split across chunks */
+          this._escBuffer = "";
         }
 
         /**
@@ -1086,7 +1093,7 @@
           if (e.ctrlKey) {
             if (e.key === "c" || e.key === "C") {
               const sel = window.getSelection()?.toString();
-              if (sel && sel.length > 0) return; // Allow native clipboard copy
+              if (sel) return; // Allow native clipboard copy
               e.preventDefault();
               this._emit("\x03"); // ETX (Ctrl+C)
               return;
@@ -1207,6 +1214,12 @@
          * @returns {void}
          */
         _parseAnsi(input) {
+          // Prepend any buffered partial escape sequence from previous chunk
+          if (this._escBuffer) {
+            input = this._escBuffer + input;
+            this._escBuffer = "";
+          }
+
           const regex = /\x1b\[([0-9;]*)([a-zA-Z])/g;
           let lastIndex = 0;
           let match;
@@ -1235,7 +1248,18 @@
 
           const remaining = input.substring(lastIndex);
           if (remaining) {
-            this._appendText(remaining);
+            // Check if remaining ends with an incomplete escape sequence
+            const partialEsc = /\x1b(\[([0-9;]*)?)?$/.exec(remaining);
+            if (partialEsc) {
+              // Buffer the partial escape for the next chunk
+              const safeText = remaining.substring(0, partialEsc.index);
+              if (safeText) {
+                this._appendText(safeText);
+              }
+              this._escBuffer = partialEsc[0];
+            } else {
+              this._appendText(remaining);
+            }
           }
         }
 
@@ -1363,13 +1387,40 @@
         }
 
         /**
+         * Computes a fingerprint string for the current terminal style state.
+         * Used to merge adjacent spans with identical styling.
+         * @private
+         * @returns {string} Style fingerprint key.
+         */
+        _getStyleKey() {
+          const s = this.currentStyles;
+          let fg = s.fg;
+          let bg = s.bg;
+          if (s.inverse) {
+            const temp = fg || "#f8fafc";
+            fg = bg || "#06090e";
+            bg = temp;
+          }
+          return `${fg||''}|${bg||''}|${s.bold?1:0}|${s.dim?1:0}|${s.italic?1:0}|${s.underline?1:0}`;
+        }
+
+        /**
          * Creates and appends a styled span element to the active line.
+         * Merges with the previous span if styles are identical to reduce DOM node count.
          * @private
          * @param {string} text - Text segment to render.
          * @returns {void}
          */
         _flushSpan(text) {
           if (!text || !this.currentLineEl) return;
+
+          // Attempt to merge with previous span if styles match
+          const key = this._getStyleKey();
+          const lastChild = /** @type {any} */ (this.currentLineEl.lastChild);
+          if (lastChild && lastChild.nodeName === "SPAN" && lastChild._styleKey === key) {
+            lastChild.textContent += text;
+            return;
+          }
 
           const span = document.createElement("span");
           span.textContent = text;
@@ -1389,6 +1440,7 @@
           if (this.currentStyles.italic) span.style.fontStyle = "italic";
           if (this.currentStyles.underline) span.style.textDecoration = "underline";
 
+          /** @type {any} */ (span)._styleKey = key;
           this.currentLineEl.appendChild(span);
         }
       }
@@ -1447,6 +1499,24 @@
         txBytesLabel.textContent = formatBytes(txByteCount);
       }
 
+      /** @type {boolean} Guards rAF-based stats update scheduling */
+      let statsUpdateScheduled = false;
+
+      /**
+       * Schedules a throttled stats update via requestAnimationFrame.
+       * Prevents excessive DOM writes at high baud rates.
+       * @returns {void}
+       */
+      function scheduleStatsUpdate() {
+        if (!statsUpdateScheduled) {
+          statsUpdateScheduled = true;
+          requestAnimationFrame(() => {
+            updateStats();
+            statsUpdateScheduled = false;
+          });
+        }
+      }
+
       /** @type {boolean} State tracker for timestamp prefix insertion */
       let atLineStart = true;
 
@@ -1465,6 +1535,9 @@
        * @returns {Promise<void>}
        */
       async function connectSerial() {
+        // Guard against rapid double-clicks during async connection
+        btnConnect.disabled = true;
+
         if (!("serial" in navigator)) {
           alert("Web Serial API is not supported in this browser. Please use Chrome, Edge, or Opera.");
           return;
@@ -1581,7 +1654,9 @@
       // Hardware port disconnect event (when virtual or physical device is disconnected at OS level)
       if ("serial" in navigator) {
         navigator.serial.addEventListener("disconnect", (event) => {
-          if (event.target === port) {
+          // SerialConnectionEvent exposes .port; fallback to .target for older Chromium builds
+          const disconnectedPort = /** @type {any} */ (event).port || event.target;
+          if (disconnectedPort === port) {
             if (term) term.writeln("\r\n\x1b[33m⚠️ Device disconnected from system\x1b[0m\r\n");
             disconnectSerial();
           }
@@ -1659,6 +1734,9 @@
       /** @type {TextDecoder} Global stream text decoder */
       const textDecoder = new TextDecoder();
 
+      /** @type {TextEncoder} Global stream text encoder (hoisted to avoid per-keystroke allocation) */
+      const textEncoder = new TextEncoder();
+
       /**
        * Handles incoming byte buffers from the serial port.
        * @param {Uint8Array} bytes - Raw received byte array.
@@ -1666,11 +1744,16 @@
        */
       function handleIncomingBytes(bytes) {
         rxByteCount += bytes.length;
-        updateStats();
+        scheduleStatsUpdate();
 
         // Convert to string for terminal & log
         const text = textDecoder.decode(bytes, { stream: true });
         logBuffer += text;
+
+        // Cap log buffer to prevent unbounded memory growth in long sessions
+        if (logBuffer.length > MAX_LOG_BUFFER_SIZE) {
+          logBuffer = logBuffer.slice(-MAX_LOG_BUFFER_SIZE);
+        }
 
         if (term) {
           if (chkTimestamp.checked) {
@@ -1734,6 +1817,13 @@
         }
 
         hexContainer.insertAdjacentHTML("beforeend", html);
+
+        // Trim hex view scrollback to prevent unbounded DOM growth
+        const maxHexRows = 10000;
+        while (hexContainer.children.length > maxHexRows) {
+          hexContainer.removeChild(hexContainer.firstChild);
+        }
+
         if (chkAutoScroll.checked) {
           hexContainer.scrollTop = hexContainer.scrollHeight;
         }
@@ -1745,7 +1835,7 @@
        * @returns {string} Escaped HTML string.
        */
       function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
       }
 
       /**
@@ -1770,15 +1860,14 @@
           let bytes;
 
           if (typeof data === "string") {
-            const encoder = new TextEncoder();
-            bytes = encoder.encode(data);
+            bytes = textEncoder.encode(data);
           } else {
             bytes = data;
           }
 
           await writer.write(bytes);
           txByteCount += bytes.length;
-          updateStats();
+          scheduleStatsUpdate();
         } catch (err) {
           console.error("Write error:", err);
         } finally {
@@ -1810,12 +1899,12 @@
               renderMacros();
             } else {
               const nl = getNewlineSequence();
-              const payload = (m.cmd === "?" ? "?" : m.cmd + nl);
+              const payload = m.cmd + nl;
               writeToSerial(payload);
               if (chkLocalEcho.checked && term) {
                 term.writeln(`\x1b[36m[MACRO] > ${m.cmd}\x1b[0m`);
               }
-              term.focus();
+              if (term) term.focus();
             }
           });
 
@@ -1861,14 +1950,14 @@
         dtrState = await toggleSignal("dataTerminalReady", dtrState);
         btnDtr.classList.toggle("active", dtrState);
         btnDtr.textContent = `DTR: ${dtrState ? "ON" : "OFF"}`;
-        term.focus();
+        if (term) term.focus();
       });
 
       btnRts.addEventListener("click", async () => {
         rtsState = await toggleSignal("requestToSend", rtsState);
         btnRts.classList.toggle("active", rtsState);
         btnRts.textContent = `RTS: ${rtsState ? "ON" : "OFF"}`;
-        term.focus();
+        if (term) term.focus();
       });
 
       // ESP32 / Arduino Hardware Reset (pulse DTR & RTS)
@@ -1881,23 +1970,24 @@
           await new Promise((r) => setTimeout(r, 50));
           await port.setSignals({ dataTerminalReady: false, requestToSend: false });
           if (term) term.writeln("\r\n\x1b[33m⚡ Reset pulse sent to device\x1b[0m\r\n");
-          term.focus();
+          if (term) term.focus();
         } catch (err) {
           console.error("Reset failed:", err);
         }
       });
 
-      // Break signal
+      // Break signal (requires Chromium 110+; non-standard in Web Serial spec)
       btnBreak.addEventListener("click", async () => {
         if (!port || !isConnected || isClosing) return;
         try {
-          await port.setSignals({ break: true });
+          await port.setSignals(/** @type {any} */ ({ break: true }));
           await new Promise((r) => setTimeout(r, 250));
-          await port.setSignals({ break: false });
+          await port.setSignals(/** @type {any} */ ({ break: false }));
           if (term) term.writeln("\r\n\x1b[33m⚡ Break signal sent\x1b[0m\r\n");
-          term.focus();
+          if (term) term.focus();
         } catch (err) {
-          console.error("Break signal failed:", err);
+          console.warn("Break signal not supported in this browser:", err);
+          if (term) term.writeln("\r\n\x1b[31m✗ Break signal failed \u2014 not supported by this browser/driver\x1b[0m\r\n");
         }
       });
 
@@ -1923,7 +2013,10 @@
         if (hexContainer) hexContainer.innerHTML = "";
         hexOffset = 0;
         logBuffer = "";
-        term.focus();
+        rxByteCount = 0;
+        txByteCount = 0;
+        updateStats();
+        if (term) term.focus();
       });
 
       // Export Log
@@ -1938,7 +2031,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        term.focus();
+        if (term) term.focus();
       });
 
       // Settings Modal
@@ -1947,12 +2040,12 @@
       });
       btnCloseModal.addEventListener("click", () => {
         modalSettings.classList.remove("active");
-        term.focus();
+        if (term) term.focus();
       });
       modalSettings.addEventListener("click", (e) => {
         if (e.target === modalSettings) {
           modalSettings.classList.remove("active");
-          term.focus();
+          if (term) term.focus();
         }
       });
 
@@ -1964,7 +2057,7 @@
           baudSelect.value = val;
         }
         modalSettings.classList.remove("active");
-        term.focus();
+        if (term) term.focus();
       });
 
       baudSelect.addEventListener("change", () => {
