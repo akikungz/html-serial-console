@@ -521,6 +521,179 @@
       border-top: 1px solid var(--border-color);
     }
 
+    .status-badge.disconnecting {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+    .status-badge.disconnecting .status-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+      animation: pulse 1s infinite;
+    }
+
+    .port-info-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      background: rgba(59, 130, 246, 0.12);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      white-space: nowrap;
+    }
+
+    .pin-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      background: #172033;
+      border: 1px solid #28354f;
+      color: var(--text-dim);
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .pin-indicator.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    /* Command Input Bar at bottom of Main */
+    .command-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #0d131f;
+      border-top: 1px solid var(--border-color);
+      z-index: 5;
+    }
+
+    .btn-cmd-mode {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.65rem;
+      background: #172033;
+      border: 1px solid #28354f;
+      color: var(--accent-cyan);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      min-width: 62px;
+      transition: all 0.15s ease;
+    }
+    .btn-cmd-mode:hover {
+      background: #202d45;
+      border-color: var(--accent-cyan);
+    }
+    .btn-cmd-mode.hex-mode {
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .command-input-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+    }
+    .command-input-wrapper input {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.45rem 0.75rem;
+      background: #06090e;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      outline: none;
+    }
+    .command-input-wrapper input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    .command-eol-group select {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.45rem 0.6rem;
+      background: #172033;
+      border: 1px solid #28354f;
+      color: var(--text-muted);
+    }
+
+    .hex-row-pending {
+      opacity: 0.75;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    /* File Transfer Progress Modal */
+    .progress-container {
+      width: 100%;
+      background: #0d131f;
+      border-radius: 9999px;
+      height: 8px;
+      overflow: hidden;
+      margin: 1rem 0;
+      border: 1px solid var(--border-color);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    .transfer-details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 860px) {
+      header {
+        padding: 0.6rem 0.9rem;
+      }
+      .toolbar-sub {
+        padding: 0.4rem 0.9rem;
+      }
+      .tab-bar {
+        padding: 0 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-top: 0.35rem;
+        padding-bottom: 0.35rem;
+      }
+      .terminal-actions {
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .brand span {
+        display: none;
+      }
+      .command-bar {
+        padding: 0.4rem 0.6rem;
+        gap: 0.35rem;
+      }
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+      .signals-group {
+        flex-wrap: wrap;
+      }
+    }
+
     /* Compatibility Banner */
     #compat-banner {
       display: none;
@@ -770,6 +943,11 @@
         <span id="status-text">Disconnected</span>
       </div>
 
+      <div id="port-info-badge" class="port-info-tag" style="display: none;" title="Detected USB Serial Device">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10m-4-6 4-4 4 4"/><circle cx="12" cy="18" r="3"/></svg>
+        <span id="port-info-text"></span>
+      </div>
+
       <select id="baud-select" title="Baud Rate">
         <option value="9600">9600 baud</option>
         <option value="19200">19200 baud</option>
@@ -810,8 +988,11 @@
       <span style="color: var(--text-dim); font-size: 0.75rem; font-weight: 600;">PINS:</span>
       <button id="btn-dtr" class="signal-btn" title="Toggle Data Terminal Ready">DTR: OFF</button>
       <button id="btn-rts" class="signal-btn" title="Toggle Request To Send">RTS: OFF</button>
-      <button id="btn-reset-esp" class="signal-btn" title="Pulse RTS/DTR for ESP32/Arduino Reset">⚡ Reset Device</button>
+      <button id="btn-reset-esp" class="signal-btn" title="Pulse RTS/DTR for ESP32 Reset">⚡ Reset ESP32</button>
+      <button id="btn-reset-arduino" class="signal-btn" title="Pulse DTR for Arduino Reset">⚡ Reset Arduino</button>
       <button id="btn-break" class="signal-btn" title="Send Break Signal">Break</button>
+      <span class="pin-indicator" id="pin-cts" title="Clear To Send (Hardware Input)">CTS</span>
+      <span class="pin-indicator" id="pin-dsr" title="Data Set Ready (Hardware Input)">DSR</span>
     </div>
 
     <!-- Quick Macros Toolbar -->
@@ -857,6 +1038,11 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
           Export
         </button>
+        <button id="btn-send-file" class="btn-ghost" title="Send text, binary, or G-code file to device">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Send File
+        </button>
+        <input type="file" id="file-input-hidden" style="display: none;" />
       </div>
     </div>
 
@@ -869,6 +1055,29 @@
     <div id="panel-hex" class="view-panel">
       <div id="hex-container"></div>
     </div>
+
+    <!-- Command Input Bar -->
+    <div class="command-bar" id="command-bar">
+      <div class="command-format-group">
+        <button id="btn-cmd-mode" class="btn-cmd-mode" title="Toggle between ASCII text and raw HEX bytes mode">ASCII</button>
+      </div>
+      <div class="command-input-wrapper">
+        <input type="text" id="input-command" placeholder="Type command to send... (Enter to send, ↑/↓ for history)" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="command-eol-group">
+        <select id="select-cmd-eol" title="Line Ending for Command Input">
+          <option value="default">Line: (Settings)</option>
+          <option value="none">None</option>
+          <option value="cr">CR (\r)</option>
+          <option value="lf">LF (\n)</option>
+          <option value="crlf">CRLF (\r\n)</option>
+        </select>
+      </div>
+      <button id="btn-send-cmd" class="btn-primary" title="Send Command to Serial Port">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Send</span>
+      </button>
+    </div>
   </main>
 
   <!-- Advanced Settings Modal -->
@@ -878,6 +1087,8 @@
         <h3>Serial Port Settings</h3>
         <button id="btn-close-modal" class="btn-ghost">✕</button>
       </div>
+
+      <div id="settings-connected-notice" style="display:none; padding: 0.5rem 0.75rem; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius-sm); font-size: 0.8rem; color: #93c5fd; margin-bottom: 1rem;">ℹ️ Port is currently connected. Baud rate and framing changes will apply on next connection.</div>
 
       <div class="modal-grid">
         <div class="form-group">
@@ -934,10 +1145,38 @@
             <option value="del">DEL (ASCII 0x7F) - Standard Delete</option>
           </select>
         </div>
+
+        <div class="form-group full-width">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="cfg-auto-reconnect">
+            <span>Auto-reconnect to authorized device when available or plugged in</span>
+          </label>
+        </div>
       </div>
 
       <div class="modal-footer">
+        <button id="btn-forget-port" class="btn-danger" style="margin-right: auto; display: none;" title="Revoke browser permission for this serial port">Forget Port</button>
         <button id="btn-apply-settings" class="btn-primary">Apply Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Transfer Progress Modal -->
+  <div id="modal-file-transfer" class="modal-overlay">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="transfer-title">Sending File...</h3>
+      </div>
+      <p id="transfer-filename" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); word-break: break-all; margin-bottom: 0.5rem;"></p>
+      <div class="progress-container">
+        <div id="transfer-progress-bar" class="progress-bar-fill"></div>
+      </div>
+      <div class="transfer-details">
+        <span id="transfer-bytes">0 / 0 B (0%)</span>
+        <span id="transfer-speed">0 KB/s</span>
+      </div>
+      <div class="modal-footer" style="margin-top: 1.25rem;">
+        <button id="btn-cancel-transfer" class="btn-danger">Cancel Transfer</button>
       </div>
     </div>
   </div>
@@ -966,19 +1205,19 @@
        */
 
       /**
-       * @typedef {Object} TerminalStyles
-       * @property {string|null} fg - Current foreground color (hex or rgb).
-       * @property {string|null} bg - Current background color (hex or rgb).
-       * @property {boolean} bold - Whether bold styling is enabled.
-       * @property {boolean} dim - Whether dim/faint styling is enabled.
-       * @property {boolean} italic - Whether italic styling is enabled.
-       * @property {boolean} underline - Whether underline styling is enabled.
-       * @property {boolean} inverse - Whether inverted foreground/background is enabled.
-       */
-
-      /**
-       * @typedef {Object} TerminalOptions
-       * @property {number} [scrollback=10000] - Maximum scrollback line count retained in memory.
+       * @typedef {Object} SerialSettings
+       * @property {number} baudRate - Serial baud rate.
+       * @property {number} dataBits - Data bits (7 or 8).
+       * @property {number} stopBits - Stop bits (1 or 2).
+       * @property {"none"|"even"|"odd"} parity - Parity checking mode.
+       * @property {"none"|"hardware"} flowControl - Flow control mode.
+       * @property {number} bufferSize - Stream buffer size in bytes.
+       * @property {"cr"|"crlf"|"lf"} newlineMode - Transmitted newline sequence for Enter.
+       * @property {"bs"|"del"} backspaceMode - Transmitted sequence for Backspace.
+       * @property {boolean} timestamp - Whether timestamp prefixes are enabled.
+       * @property {boolean} autoScroll - Whether automatic scrolling is enabled.
+       * @property {boolean} localEcho - Whether local terminal character echo is enabled.
+       * @property {boolean} autoReconnect - Whether auto-reconnecting to authorized ports is enabled.
        */
 
       // Check Web Serial support in current browser context
@@ -988,10 +1227,106 @@
       }
 
       /* =========================================================================
-       * State Management
+       * USB Device Database & Hardware Identification
        * ========================================================================= */
 
-      /** @type {SerialPort|null} Active Web Serial port handle */
+      /** @type {Record<number, string>} Common USB-to-UART vendor identifiers */
+      const USB_VENDORS = {
+        0x10c4: "Silicon Labs CP210x",
+        0x1a86: "WCH CH340 / CH9102",
+        0x0403: "FTDI USB Serial",
+        0x303a: "Espressif USB Serial/JTAG",
+        0x2341: "Arduino",
+        0x2e8a: "Raspberry Pi RP2040/RP2350",
+        0x0483: "STMicroelectronics STM32",
+        0x1366: "SEGGER J-Link",
+        0x0d28: "ARM DAPLink",
+        0x2886: "Seeed Studio",
+        0x1b4f: "SparkFun",
+        0x239a: "Adafruit",
+        0x04d8: "Microchip",
+        0x058b: "Infineon"
+      };
+
+      /**
+       * Inspects serial port info and extracts vendor/product details if available.
+       * @param {any} portHandle - Web Serial port instance.
+       * @returns {{ vid: number, pid: number|null, vidHex: string, pidHex: string|null, vendor: string, chipText: string }|null}
+       */
+      function getPortDeviceInfo(portHandle) {
+        if (!portHandle || typeof portHandle.getInfo !== "function") return null;
+        try {
+          const info = portHandle.getInfo();
+          if (!info || typeof info.usbVendorId !== "number") return null;
+          const vid = info.usbVendorId;
+          const pid = typeof info.usbProductId === "number" ? info.usbProductId : null;
+          const vidHex = "0x" + vid.toString(16).padStart(4, "0").toUpperCase();
+          const pidHex = pid != null ? "0x" + pid.toString(16).padStart(4, "0").toUpperCase() : null;
+          const vendor = USB_VENDORS[vid] || `USB Device (${vidHex})`;
+          const chipText = pidHex ? `${vendor} (${vidHex}:${pidHex})` : `${vendor} (${vidHex})`;
+          return { vid, pid, vidHex, pidHex, vendor, chipText };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      /* =========================================================================
+       * State Management & Persistent Settings
+       * ========================================================================= */
+
+      const SETTINGS_KEY = "serial_console_settings";
+
+      /** @type {SerialSettings} */
+      const DEFAULT_SETTINGS = {
+        baudRate: 115200,
+        dataBits: 8,
+        stopBits: 1,
+        parity: "none",
+        flowControl: "none",
+        bufferSize: 16384,
+        newlineMode: "cr",
+        backspaceMode: "bs",
+        timestamp: false,
+        autoScroll: true,
+        localEcho: false,
+        autoReconnect: false
+      };
+
+      /**
+       * Loads configuration from localStorage with robust fallback.
+       * @returns {SerialSettings}
+       */
+      function loadSettings() {
+        try {
+          const raw = localStorage.getItem(SETTINGS_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === "object") {
+              return { ...DEFAULT_SETTINGS, ...parsed };
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to load settings:", err);
+        }
+        return { ...DEFAULT_SETTINGS };
+      }
+
+      /**
+       * Persists active settings to localStorage.
+       * @param {SerialSettings} settings
+       */
+      function saveSettings(settings) {
+        try {
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        } catch (err) {
+          console.warn("Failed to save settings:", err);
+        }
+      }
+
+      /** @type {SerialSettings} */
+      let appSettings = loadSettings();
+
+      /** @type {any|null} Active Web Serial port handle */
       let port = null;
 
       /** @type {ReadableStreamDefaultReader<Uint8Array>|null} Active stream reader */
@@ -1003,7 +1338,7 @@
       /** @type {boolean} Indicates whether a connection is currently active */
       let isConnected = false;
 
-      /** @type {boolean} Prevents re-entrant lock requests during disconnection */
+      /** @type {boolean} Prevents re-entrant teardown during disconnection */
       let isClosing = false;
 
       /** @type {number} Total bytes received */
@@ -1024,14 +1359,119 @@
       /** @type {boolean} RTS pin signal state */
       let rtsState = false;
 
-      /** @type {MacroItem[]} List of user-configured quick macro shortcuts */
-      let macros = /** @type {MacroItem[]} */ (JSON.parse(localStorage.getItem("serial_macros") || JSON.stringify([
+      /** @type {any|null} Interval timer for hardware pin polling */
+      let pinPollInterval = null;
+
+      /** @type {MacroItem[]} Default quick macro commands */
+      const DEFAULT_MACROS = [
         { label: "? List", cmd: "?" },
         { label: "Help", cmd: "help" },
         { label: "Status", cmd: "status" },
         { label: "Reboot", cmd: "reboot" },
         { label: "AT", cmd: "AT" }
-      ])));
+      ];
+
+      /**
+       * Safely retrieves stored macros from localStorage.
+       * @returns {MacroItem[]}
+       */
+      function loadMacros() {
+        try {
+          const raw = localStorage.getItem("serial_macros");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+          }
+        } catch (err) {
+          console.warn("Failed to load macros from localStorage:", err);
+        }
+        return [...DEFAULT_MACROS];
+      }
+
+      /**
+       * Safely saves macros to localStorage.
+       * @param {MacroItem[]} data
+       */
+      function saveMacros(data) {
+        try {
+          localStorage.setItem("serial_macros", JSON.stringify(data));
+        } catch (err) {
+          console.warn("Failed to save macros to localStorage:", err);
+        }
+      }
+
+      /** @type {MacroItem[]} List of user-configured quick macro shortcuts */
+      let macros = loadMacros();
+
+      /* --- Async Write Queue State --- */
+      /** @type {Array<{ data: string|Uint8Array, resolve: () => void, reject: (err: any) => void }>} Async FIFO write queue */
+      let writeQueue = [];
+
+      /** @type {boolean} Indicates whether the async write queue is actively processing */
+      let isWriting = false;
+
+      /** @type {Promise<void>|null} Promise tracking active write loop execution */
+      let writeLoopPromise = null;
+
+      /** @type {WritableStreamDefaultWriter<Uint8Array>|null} Currently active stream writer */
+      let currentWriter = null;
+
+      /* --- Hex Inspector Buffer State --- */
+      /** @type {Uint8Array[]} Buffer storing incoming chunks when hex view is not active */
+      let hexBuffer = [];
+
+      /** @type {number} Total bytes accumulated in hexBuffer */
+      let hexBufferTotalBytes = 0;
+
+      /** @type {number} Max hex buffer capacity to prevent unbounded memory growth (~10,000 rows) */
+      const MAX_HEX_BUFFER_BYTES = 160000;
+
+      /** @type {boolean} Tracks whether the Hex Inspector panel is currently active */
+      let isHexActive = false;
+
+      /** @type {Uint8Array} Remainder bytes from previous chunks (< 16 bytes) for strict alignment */
+      let hexRemainder = new Uint8Array(0);
+
+      /** @type {number} Byte offset counter for Hex Inspector (strictly 16-byte aligned for full rows) */
+      let hexOffset = 0;
+
+      /** @type {boolean} Guards rAF-based hex render scheduling */
+      let hexRenderScheduled = false;
+
+      /* --- Command Input Bar History State --- */
+      const CMD_HISTORY_KEY = "serial_cmd_history";
+
+      /**
+       * Loads past sent commands from localStorage.
+       * @returns {string[]}
+       */
+      function loadCmdHistory() {
+        try {
+          const raw = localStorage.getItem(CMD_HISTORY_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed.slice(-50);
+          }
+        } catch (e) {}
+        return [];
+      }
+
+      /**
+       * Saves command history to localStorage.
+       * @param {string[]} hist
+       */
+      function saveCmdHistory(hist) {
+        try {
+          localStorage.setItem(CMD_HISTORY_KEY, JSON.stringify(hist.slice(-50)));
+        } catch (e) {}
+      }
+
+      /** @type {string[]} */
+      let cmdHistory = loadCmdHistory();
+      let cmdHistoryIndex = -1;
+      let cmdTempInput = "";
+      /** @type {"ASCII"|"HEX"} */
+      let cmdMode = "ASCII";
 
       /* =========================================================================
        * UI Element References
@@ -1041,6 +1481,8 @@
       const btnDisconnect = /** @type {HTMLButtonElement} */ (document.getElementById("btn-disconnect"));
       const statusBadge = /** @type {HTMLElement} */ (document.getElementById("status-badge"));
       const statusText = /** @type {HTMLElement} */ (document.getElementById("status-text"));
+      const portInfoBadge = /** @type {HTMLElement|null} */ (document.getElementById("port-info-badge"));
+      const portInfoText = /** @type {HTMLElement|null} */ (document.getElementById("port-info-text"));
       const baudSelect = /** @type {HTMLSelectElement} */ (document.getElementById("baud-select"));
       const rxBytesLabel = /** @type {HTMLElement} */ (document.getElementById("rx-bytes"));
       const txBytesLabel = /** @type {HTMLElement} */ (document.getElementById("tx-bytes"));
@@ -1049,19 +1491,33 @@
       const chkLocalEcho = /** @type {HTMLInputElement} */ (document.getElementById("chk-localecho"));
       const btnClear = /** @type {HTMLButtonElement} */ (document.getElementById("btn-clear"));
       const btnExport = /** @type {HTMLButtonElement} */ (document.getElementById("btn-export"));
+      const btnSendFile = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-send-file"));
+      const fileInputHidden = /** @type {HTMLInputElement|null} */ (document.getElementById("file-input-hidden"));
       const btnDtr = /** @type {HTMLButtonElement} */ (document.getElementById("btn-dtr"));
       const btnRts = /** @type {HTMLButtonElement} */ (document.getElementById("btn-rts"));
       const btnResetEsp = /** @type {HTMLButtonElement} */ (document.getElementById("btn-reset-esp"));
+      const btnResetArduino = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-reset-arduino"));
       const btnBreak = /** @type {HTMLButtonElement} */ (document.getElementById("btn-break"));
+      const pinCts = /** @type {HTMLElement|null} */ (document.getElementById("pin-cts"));
+      const pinDsr = /** @type {HTMLElement|null} */ (document.getElementById("pin-dsr"));
       const hexContainer = /** @type {HTMLElement} */ (document.getElementById("hex-container"));
       const macrosList = /** @type {HTMLElement} */ (document.getElementById("macros-list"));
       const btnAddMacro = /** @type {HTMLButtonElement} */ (document.getElementById("btn-add-macro"));
+
+      // Command Bar Elements
+      const commandBar = /** @type {HTMLElement|null} */ (document.getElementById("command-bar"));
+      const btnCmdMode = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-cmd-mode"));
+      const inputCommand = /** @type {HTMLInputElement|null} */ (document.getElementById("input-command"));
+      const selectCmdEol = /** @type {HTMLSelectElement|null} */ (document.getElementById("select-cmd-eol"));
+      const btnSendCmd = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-send-cmd"));
 
       // Settings Modal Elements
       const modalSettings = /** @type {HTMLElement} */ (document.getElementById("modal-settings"));
       const btnSettings = /** @type {HTMLButtonElement} */ (document.getElementById("btn-settings"));
       const btnCloseModal = /** @type {HTMLButtonElement} */ (document.getElementById("btn-close-modal"));
       const btnApplySettings = /** @type {HTMLButtonElement} */ (document.getElementById("btn-apply-settings"));
+      const btnForgetPort = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-forget-port"));
+      const settingsNotice = /** @type {HTMLElement|null} */ (document.getElementById("settings-connected-notice"));
       const cfgBaud = /** @type {HTMLInputElement} */ (document.getElementById("cfg-baud"));
       const cfgDataBits = /** @type {HTMLSelectElement} */ (document.getElementById("cfg-databits"));
       const cfgStopBits = /** @type {HTMLSelectElement} */ (document.getElementById("cfg-stopbits"));
@@ -1070,13 +1526,50 @@
       const cfgBuffer = /** @type {HTMLInputElement} */ (document.getElementById("cfg-buffer"));
       const cfgNewlineMode = /** @type {HTMLSelectElement} */ (document.getElementById("cfg-newline-mode"));
       const cfgBackspaceMode = /** @type {HTMLSelectElement} */ (document.getElementById("cfg-backspace-mode"));
+      const cfgAutoReconnect = /** @type {HTMLInputElement|null} */ (document.getElementById("cfg-auto-reconnect"));
+
+      // File Transfer Modal Elements
+      const modalFileTransfer = /** @type {HTMLElement|null} */ (document.getElementById("modal-file-transfer"));
+      const transferTitle = /** @type {HTMLElement|null} */ (document.getElementById("transfer-title"));
+      const transferFilename = /** @type {HTMLElement|null} */ (document.getElementById("transfer-filename"));
+      const transferProgressBar = /** @type {HTMLElement|null} */ (document.getElementById("transfer-progress-bar"));
+      const transferBytes = /** @type {HTMLElement|null} */ (document.getElementById("transfer-bytes"));
+      const transferSpeed = /** @type {HTMLElement|null} */ (document.getElementById("transfer-speed"));
+      const btnCancelTransfer = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-cancel-transfer"));
+
+      /**
+       * Applies persisted settings to all modal and toolbar controls.
+       */
+      function syncSettingsToUI() {
+        if (baudSelect) {
+          const bStr = String(appSettings.baudRate);
+          if ([...baudSelect.options].some((o) => o.value === bStr)) {
+            baudSelect.value = bStr;
+          } else {
+            baudSelect.value = "custom";
+          }
+        }
+        if (cfgBaud) cfgBaud.value = String(appSettings.baudRate);
+        if (cfgDataBits) cfgDataBits.value = String(appSettings.dataBits);
+        if (cfgStopBits) cfgStopBits.value = String(appSettings.stopBits);
+        if (cfgParity) cfgParity.value = appSettings.parity;
+        if (cfgFlow) cfgFlow.value = appSettings.flowControl;
+        if (cfgBuffer) cfgBuffer.value = String(appSettings.bufferSize);
+        if (cfgNewlineMode) cfgNewlineMode.value = appSettings.newlineMode;
+        if (cfgBackspaceMode) cfgBackspaceMode.value = appSettings.backspaceMode;
+        if (chkTimestamp) chkTimestamp.checked = !!appSettings.timestamp;
+        if (chkAutoScroll) chkAutoScroll.checked = !!appSettings.autoScroll;
+        if (chkLocalEcho) chkLocalEcho.checked = !!appSettings.localEcho;
+        if (cfgAutoReconnect) cfgAutoReconnect.checked = !!appSettings.autoReconnect;
+      }
+      syncSettingsToUI();
 
       /**
        * Resolves the configured newline transmission sequence.
        * @returns {string} Newline character string.
        */
       function getNewlineSequence() {
-        const mode = cfgNewlineMode ? cfgNewlineMode.value : "cr";
+        const mode = cfgNewlineMode ? cfgNewlineMode.value : appSettings.newlineMode;
         if (mode === "crlf") return "\r\n";
         if (mode === "lf") return "\n";
         return "\r"; // default standard serial CR
@@ -1087,18 +1580,40 @@
        * @returns {string} Backspace character sequence.
        */
       function getBackspaceSequence() {
-        const mode = cfgBackspaceMode ? cfgBackspaceMode.value : "bs";
+        const mode = cfgBackspaceMode ? cfgBackspaceMode.value : appSettings.backspaceMode;
         if (mode === "del") return "\x7f";
         return "\x08"; // default BS (\b)
       }
 
+      /**
+       * Parses common escape strings (\r, \n, \t, \e, \xHH) in commands and macros.
+       * @param {string} str
+       * @returns {string}
+       */
+      function parseEscapes(str) {
+        return str.replace(/\\r/g, "\r")
+                  .replace(/\\n/g, "\n")
+                  .replace(/\\t/g, "\t")
+                  .replace(/\\e/g, "\x1b")
+                  .replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+      }
 
+      /**
+       * Strips ANSI escape sequences and terminal control characters for clean plain-text log export.
+       * @param {string} text
+       * @returns {string}
+       */
+      function stripAnsi(text) {
+        return text.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "")
+                   .replace(/\x1b\].*?(\x07|\x1b\\)/g, "")
+                   .replace(/\x1b[()#][0-9A-Za-z]/g, "")
+                   .replace(/\x1b[=>]/g, "");
+      }
 
       /* =========================================================================
-       * Application Helper Functions
+       * xterm.js Terminal & FitAddon Initialization
        * ========================================================================= */
 
-      // xterm.js Terminal + FitAddon init
       const term = new Terminal({
         theme: {
           background:'#06090e', foreground:'#f8fafc', cursor:'#38bdf8', cursorAccent:'#06090e',
@@ -1110,19 +1625,111 @@
         },
         fontFamily: '"Cascadia Code", "Fira Code", "JetBrains Mono", Consolas, "Liberation Mono", monospace',
         fontSize: 13.5, lineHeight: 1.45, cursorBlink: true, cursorStyle: 'block',
-        scrollback: 10000, convertEol: false, allowProposedApi: true, padding: 12,
+        scrollback: 10000, convertEol: true, allowProposedApi: true
       });
+
       const fitAddon = new FitAddon.FitAddon();
       term.loadAddon(fitAddon);
+
+      /**
+       * Fits terminal emulator to parent container safely with visibility checking.
+       */
+      function safeFit() {
+        const tc = document.getElementById("terminal-container");
+        const panel = document.getElementById("panel-terminal");
+        if (panel && panel.classList.contains("active") && tc && tc.clientWidth > 0 && tc.clientHeight > 0) {
+          try {
+            fitAddon.fit();
+          } catch (e) {
+            console.warn("FitAddon error:", e);
+          }
+        }
+      }
+
       (function initTerminal() {
-        const tc = document.getElementById('terminal-container');
+        const tc = document.getElementById("terminal-container");
+        if (!tc) return;
         term.open(tc);
-        fitAddon.fit();
-        window.addEventListener('resize', () => fitAddon.fit());
-        new ResizeObserver(() => fitAddon.fit()).observe(tc);
-        term.writeln('\x1b[1;36m=== Web Serial Interactive Console ===\x1b[0m');
-        term.writeln('\x1b[90mxterm.js terminal - click to focus, type to send to device.\x1b[0m\r\n');
-        term.onData((data) => { if (isConnected && !isClosing) writeToSerial(data); });
+        term.options.convertEol = true;
+        safeFit();
+        window.addEventListener("resize", safeFit);
+        new ResizeObserver(safeFit).observe(tc);
+
+        // Terminal custom keyboard shortcut interception
+        term.attachCustomKeyEventHandler((event) => {
+          if (event.type === "keydown") {
+            // Ctrl + L -> Clear terminal screen
+            if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "l") {
+              term.clear();
+              return false;
+            }
+
+            // Ctrl + C with text selection -> Copy to clipboard instead of sending ETX (0x03)
+            if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "c") {
+              if (term.hasSelection()) {
+                navigator.clipboard.writeText(term.getSelection()).catch(() => {});
+                return false;
+              }
+            }
+
+            // Ctrl + Shift + C -> Explicit copy selection
+            if (event.ctrlKey && event.shiftKey && !event.altKey && event.key.toLowerCase() === "c") {
+              if (term.hasSelection()) {
+                navigator.clipboard.writeText(term.getSelection()).catch(() => {});
+                return false;
+              }
+            }
+
+            // Ctrl + Shift + V -> Explicit paste clipboard content to serial port
+            if (event.ctrlKey && event.shiftKey && !event.altKey && event.key.toLowerCase() === "v") {
+              navigator.clipboard.readText().then((text) => {
+                if (text) writeToSerial(text);
+              }).catch(() => {});
+              return false;
+            }
+          }
+          return true;
+        });
+
+        term.writeln("\x1b[1;36m=== Web Serial Interactive Console ===\x1b[0m");
+        term.writeln("\x1b[90mxterm.js terminal ready — click to focus, or use the Command Bar below.\x1b[0m\r\n");
+
+        term.onData((data) => {
+          if (!isConnected || isClosing) return;
+
+          const nl = getNewlineSequence();
+          const bs = getBackspaceSequence();
+
+          let toSend = "";
+          let echoStr = "";
+
+          for (let i = 0; i < data.length; i++) {
+            const ch = data[i];
+            if (ch === "\r") {
+              if (data[i + 1] === "\n") i++; // skip \n of \r\n
+              toSend += nl;
+              echoStr += "\r\n";
+            } else if (ch === "\n") {
+              toSend += nl;
+              echoStr += "\r\n";
+            } else if (ch === "\x7f" || ch === "\x08") {
+              toSend += bs;
+              echoStr += "\b \b";
+            } else {
+              toSend += ch;
+              echoStr += ch;
+            }
+          }
+
+          if (toSend) {
+            writeToSerial(toSend);
+          }
+
+          if (chkLocalEcho && chkLocalEcho.checked && echoStr) {
+            term.write(echoStr);
+          }
+        });
+
         setTimeout(() => term.focus(), 150);
       })();
 
@@ -1141,11 +1748,10 @@
 
       /**
        * Updates the RX and TX byte statistics labels in the subheader.
-       * @returns {void}
        */
       function updateStats() {
-        rxBytesLabel.textContent = formatBytes(rxByteCount);
-        txBytesLabel.textContent = formatBytes(txByteCount);
+        if (rxBytesLabel) rxBytesLabel.textContent = formatBytes(rxByteCount);
+        if (txBytesLabel) txBytesLabel.textContent = formatBytes(txByteCount);
       }
 
       /** @type {boolean} Guards rAF-based stats update scheduling */
@@ -1153,8 +1759,6 @@
 
       /**
        * Schedules a throttled stats update via requestAnimationFrame.
-       * Prevents excessive DOM writes at high baud rates.
-       * @returns {void}
        */
       function scheduleStatsUpdate() {
         if (!statsUpdateScheduled) {
@@ -1178,32 +1782,107 @@
         return `\x1b[90m[${now.toTimeString().split(" ")[0]}.${String(now.getMilliseconds()).padStart(3, "0")}]\x1b[0m `;
       }
 
+      /* =========================================================================
+       * Web Serial Connection Management
+       * ========================================================================= */
+
       /**
-       * Requests a serial port from the user and opens the connection.
-       * @async
+       * Updates the header connection status badge, buttons, and signal controls.
+       * @param {boolean|"disconnecting"} state - Connection status.
+       */
+      function setConnectedUI(state) {
+        if (state === true) {
+          statusBadge.className = "status-badge connected";
+          statusText.textContent = "Connected";
+          btnConnect.style.display = "none";
+          btnDisconnect.style.display = "inline-flex";
+          btnDisconnect.disabled = false;
+          btnConnect.disabled = true;
+          baudSelect.disabled = true;
+          btnDtr.disabled = false;
+          btnRts.disabled = false;
+          btnResetEsp.disabled = false;
+          if (btnResetArduino) btnResetArduino.disabled = false;
+          btnBreak.disabled = false;
+        } else if (state === "disconnecting") {
+          statusBadge.className = "status-badge disconnecting";
+          statusText.textContent = "Disconnecting...";
+          btnConnect.style.display = "inline-flex";
+          btnConnect.disabled = true;
+          btnDisconnect.style.display = "none";
+          btnDisconnect.disabled = true;
+          baudSelect.disabled = true;
+          btnDtr.disabled = true;
+          btnRts.disabled = true;
+          btnResetEsp.disabled = true;
+          if (btnResetArduino) btnResetArduino.disabled = true;
+          btnBreak.disabled = true;
+        } else {
+          statusBadge.className = "status-badge";
+          statusText.textContent = "Disconnected";
+          btnConnect.style.display = "inline-flex";
+          btnConnect.disabled = false;
+          btnDisconnect.style.display = "none";
+          baudSelect.disabled = false;
+          dtrState = false;
+          rtsState = false;
+          btnDtr.classList.remove("active");
+          btnRts.classList.remove("active");
+          btnDtr.textContent = "DTR: OFF";
+          btnRts.textContent = "RTS: OFF";
+          btnDtr.disabled = false;
+          btnRts.disabled = false;
+          btnResetEsp.disabled = false;
+          if (btnResetArduino) btnResetArduino.disabled = false;
+          btnBreak.disabled = false;
+          if (portInfoBadge) portInfoBadge.style.display = "none";
+          if (btnForgetPort) btnForgetPort.style.display = "none";
+          if (pinCts) pinCts.classList.remove("active");
+          if (pinDsr) pinDsr.classList.remove("active");
+          if (settingsNotice) settingsNotice.style.display = "none";
+        }
+      }
+
+      /**
+       * Periodically polls hardware input pin states (CTS, DSR) if supported by port driver.
+       */
+      async function updateInputSignals() {
+        if (!port || !isConnected || isClosing) return;
+        try {
+          if (typeof port.getSignals === "function") {
+            const sigs = await port.getSignals();
+            if (sigs) {
+              if (pinCts && typeof sigs.clearToSend === "boolean") {
+                pinCts.classList.toggle("active", sigs.clearToSend);
+              }
+              if (pinDsr && typeof sigs.dataSetReady === "boolean") {
+                pinDsr.classList.toggle("active", sigs.dataSetReady);
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      /**
+       * Connects to a specific Web Serial port handle.
+       * @param {any} targetPort
        * @returns {Promise<void>}
        */
-      async function connectSerial() {
-        // Guard against rapid double-clicks during async connection
+      async function connectSerialPort(targetPort) {
         btnConnect.disabled = true;
-
-        if (!("serial" in navigator)) {
-          alert("Web Serial API is not supported in this browser. Please use Chrome, Edge, or Opera.");
-          return;
-        }
 
         if (port || isConnected) {
           await disconnectSerial();
         }
 
         try {
-          port = await navigator.serial.requestPort();
-          
-          const baudRate = parseInt(baudSelect.value === "custom" ? cfgBaud.value : baudSelect.value, 10);
-          const dataBits = /** @type {7|8} */ (parseInt(cfgDataBits.value, 10));
-          const stopBits = /** @type {1|2} */ (parseInt(cfgStopBits.value, 10));
-          const parity = /** @type {'none'|'even'|'odd'} */ (cfgParity.value);
-          const flowControl = /** @type {'none'|'hardware'} */ (cfgFlow.value);
+          port = targetPort;
+
+          const baudRate = parseInt(baudSelect.value === "custom" ? cfgBaud.value : baudSelect.value, 10) || appSettings.baudRate || 115200;
+          const dataBits = /** @type {7|8} */ (parseInt(cfgDataBits.value, 10) || 8);
+          const stopBits = /** @type {1|2} */ (parseInt(cfgStopBits.value, 10) || 1);
+          const parity = /** @type {'none'|'even'|'odd'} */ (cfgParity.value || "none");
+          const flowControl = /** @type {'none'|'hardware'} */ (cfgFlow.value || "none");
           const bufferSize = parseInt(cfgBuffer.value, 10) || 16384;
 
           await port.open({
@@ -1219,10 +1898,31 @@
           isClosing = false;
           setConnectedUI(true);
 
+          // Detect USB chip information
+          const devInfo = getPortDeviceInfo(port);
+          if (devInfo && portInfoBadge && portInfoText) {
+            portInfoText.textContent = devInfo.chipText;
+            portInfoBadge.title = `Connected: ${devInfo.vendor} (Vendor: ${devInfo.vidHex}${devInfo.pidHex ? ', Product: ' + devInfo.pidHex : ''})`;
+            portInfoBadge.style.display = "inline-flex";
+          }
+
+          // Show forget port button if modern Web Serial port.forget is supported
+          if (btnForgetPort && typeof port.forget === "function") {
+            btnForgetPort.style.display = "inline-flex";
+          }
+
+          if (settingsNotice) settingsNotice.style.display = "block";
+
           if (term) {
-            term.writeln(`\r\n\x1b[1;32m● Connected at ${baudRate} baud (${dataBits}${parity[0].toUpperCase()}${stopBits})\x1b[0m\r\n`);
+            const devSummary = devInfo ? ` | ${devInfo.chipText}` : "";
+            term.writeln(`\r\n\x1b[1;32m● Connected at ${baudRate} baud (${dataBits}${parity[0].toUpperCase()}${stopBits}${devSummary})\x1b[0m\r\n`);
             term.focus();
           }
+
+          // Start hardware pin polling
+          if (pinPollInterval) clearInterval(pinPollInterval);
+          pinPollInterval = setInterval(updateInputSignals, 1000);
+          updateInputSignals();
 
           startReading();
         } catch (/** @type {any} */ err) {
@@ -1238,8 +1938,31 @@
       }
 
       /**
+       * Requests a serial port from user via browser dialog and opens it.
+       * @returns {Promise<void>}
+       */
+      async function connectSerial() {
+        if (!("serial" in navigator)) {
+          alert("Web Serial API is not supported in this browser. Please use Google Chrome, Microsoft Edge, or Opera.");
+          return;
+        }
+
+        try {
+          const selectedPort = await navigator.serial.requestPort();
+          if (selectedPort) {
+            await connectSerialPort(selectedPort);
+          }
+        } catch (err) {
+          if (/** @type {any} */ (err).name !== "NotFoundError") {
+            console.error("requestPort error:", err);
+          }
+          btnConnect.disabled = false;
+        }
+      }
+
+      /**
        * Disconnects cleanly from the serial port without causing stream-lock deadlocks.
-       * @async
+       * Drains write queue, releases locks, and waits for driver teardown.
        * @returns {Promise<void>}
        */
       async function disconnectSerial() {
@@ -1249,9 +1972,48 @@
         isClosing = true;
         isConnected = false;
 
-        setConnectedUI(false);
+        setConnectedUI("disconnecting");
 
-        // 1. Cancel the active reader
+        if (pinPollInterval) {
+          clearInterval(pinPollInterval);
+          pinPollInterval = null;
+        }
+
+        // 1. Drain and abort the write queue
+        while (writeQueue.length > 0) {
+          const item = writeQueue.shift();
+          if (item) {
+            try {
+              item.reject(new Error("Serial port disconnected"));
+            } catch (e) {}
+          }
+        }
+
+        // 2. Wait for active write loop to finish
+        if (writeLoopPromise) {
+          try {
+            await Promise.race([
+              writeLoopPromise,
+              new Promise((resolve) => setTimeout(resolve, 600))
+            ]);
+          } catch (err) {
+            console.warn("Wait writeLoopPromise error:", err);
+          }
+          writeLoopPromise = null;
+        }
+
+        // 3. Cleanly abort and release writer lock if still locked
+        if (currentWriter) {
+          try {
+            await currentWriter.abort().catch(() => {});
+          } catch (e) {}
+          try {
+            currentWriter.releaseLock();
+          } catch (e) {}
+          currentWriter = null;
+        }
+
+        // 4. Cancel active reader
         if (reader) {
           try {
             await reader.cancel();
@@ -1260,12 +2022,12 @@
           }
         }
 
-        // 2. Wait for read loop to finish and release stream lock
+        // 5. Wait for read loop to finish and release stream lock
         if (readLoopPromise) {
           try {
             await Promise.race([
               readLoopPromise,
-              new Promise((resolve) => setTimeout(resolve, 500))
+              new Promise((resolve) => setTimeout(resolve, 600))
             ]);
           } catch (err) {
             console.warn("Wait readLoopPromise error:", err);
@@ -1273,7 +2035,7 @@
           readLoopPromise = null;
         }
 
-        // 3. Fallback release lock if reader is still around
+        // 6. Fallback release lock if reader is still around
         if (reader) {
           try {
             reader.releaseLock();
@@ -1281,12 +2043,12 @@
           reader = null;
         }
 
-        // 4. Close port with safety timeout for virtual COM port drivers (HHD / VSPD / com0com)
+        // 7. Close port with safety timeout for virtual COM port drivers (HHD / VSPD / com0com / CH340)
         if (port) {
           try {
             await Promise.race([
               port.close(),
-              new Promise((resolve) => setTimeout(resolve, 800))
+              new Promise((resolve) => setTimeout(resolve, 2500))
             ]);
           } catch (err) {
             console.warn("Port close error:", err);
@@ -1295,15 +2057,26 @@
         }
 
         isClosing = false;
+        setConnectedUI(false);
+
         if (term) {
           term.writeln(`\r\n\x1b[1;31m○ Disconnected\x1b[0m\r\n`);
         }
       }
 
-      // Hardware port disconnect event (when virtual or physical device is disconnected at OS level)
+      // Hardware port connect / disconnect events
       if ("serial" in navigator) {
+        navigator.serial.addEventListener("connect", (event) => {
+          if (term) term.writeln("\r\n\x1b[32m🔌 Compatible serial device plugged into system\x1b[0m\r\n");
+          if (!isConnected && !isClosing && appSettings.autoReconnect) {
+            const newPort = /** @type {any} */ (event).port || event.target;
+            if (newPort) {
+              connectSerialPort(newPort);
+            }
+          }
+        });
+
         navigator.serial.addEventListener("disconnect", (event) => {
-          // SerialConnectionEvent exposes .port; fallback to .target for older Chromium builds
           const disconnectedPort = /** @type {any} */ (event).port || event.target;
           if (disconnectedPort === port) {
             if (term) term.writeln("\r\n\x1b[33m⚠️ Device disconnected from system\x1b[0m\r\n");
@@ -1312,38 +2085,12 @@
         });
       }
 
-      /**
-       * Updates the header connection status badge, buttons, and signal controls.
-       * @param {boolean} connected - Connection status.
-       * @returns {void}
-       */
-      function setConnectedUI(connected) {
-        if (connected) {
-          statusBadge.classList.add("connected");
-          statusText.textContent = "Connected";
-          btnConnect.style.display = "none";
-          btnDisconnect.style.display = "inline-flex";
-          btnDisconnect.disabled = false;
-          baudSelect.disabled = true;
-        } else {
-          statusBadge.classList.remove("connected");
-          statusText.textContent = "Disconnected";
-          btnConnect.style.display = "inline-flex";
-          btnConnect.disabled = false;
-          btnDisconnect.style.display = "none";
-          baudSelect.disabled = false;
-          dtrState = false;
-          rtsState = false;
-          btnDtr.classList.remove("active");
-          btnRts.classList.remove("active");
-          btnDtr.textContent = "DTR: OFF";
-          btnRts.textContent = "RTS: OFF";
-        }
-      }
+      /* =========================================================================
+       * Stream Reading and Data Handling
+       * ========================================================================= */
 
       /**
-       * Launches the non-blocking continuous read loop.
-       * @returns {void}
+       * Launches the non-blocking continuous read loop with automatic error recovery.
        */
       function startReading() {
         readLoopPromise = (async () => {
@@ -1358,8 +2105,22 @@
                 }
               }
             } catch (err) {
-              console.warn("Read stream notice:", err);
-              break;
+              if (isClosing) break; // Expected reader cancel during intentional disconnect
+
+              const isFatal = !port || !port.readable || /** @type {any} */ (err).name === "NetworkError";
+              console.warn("Serial read stream notice:", err);
+
+              if (term) {
+                term.writeln(`\r\n\x1b[33m⚠️ Stream notice: ${/** @type {any} */ (err).message || /** @type {any} */ (err).name}\x1b[0m\r\n`);
+              }
+
+              if (isFatal) {
+                break;
+              }
+
+              // Non-fatal stream errors (framing error, parity error, buffer overrun):
+              // Releasing errored reader in finally, then briefly waiting to re-acquire fresh reader from port.readable
+              await new Promise((resolve) => setTimeout(resolve, 50));
             } finally {
               if (reader) {
                 try {
@@ -1389,7 +2150,6 @@
       /**
        * Handles incoming byte buffers from the serial port.
        * @param {Uint8Array} bytes - Raw received byte array.
-       * @returns {void}
        */
       function handleIncomingBytes(bytes) {
         rxByteCount += bytes.length;
@@ -1399,13 +2159,13 @@
         const text = textDecoder.decode(bytes, { stream: true });
         logBuffer += text;
 
-        // Cap log buffer to prevent unbounded memory growth in long sessions
-        if (logBuffer.length > MAX_LOG_BUFFER_SIZE) {
+        // Trim log buffer with hysteresis to prevent unbounded memory growth and constant slicing
+        if (logBuffer.length > MAX_LOG_BUFFER_SIZE + 524288) {
           logBuffer = logBuffer.slice(-MAX_LOG_BUFFER_SIZE);
         }
 
         if (term) {
-          if (chkTimestamp.checked) {
+          if (chkTimestamp && chkTimestamp.checked) {
             let output = "";
             for (let i = 0; i < text.length; i++) {
               if (atLineStart) {
@@ -1422,59 +2182,163 @@
             term.write(text);
           }
 
-          if (chkAutoScroll.checked) {
+          if (chkAutoScroll && chkAutoScroll.checked) {
             term.scrollToBottom();
           }
         }
 
-        // Append to Hex view
-        appendHexDump(bytes);
+        // Queue bytes to Hex view (strictly 16-byte aligned and throttled)
+        queueHexBytes(bytes);
       }
 
-      /** @type {number} Byte offset counter for Hex Inspector */
-      let hexOffset = 0;
+      /* =========================================================================
+       * Hex Inspector High-Performance Engine (Strict 16-Byte Row Alignment)
+       * ========================================================================= */
 
       /**
-       * Formats and appends bytes to the Hex Inspector view.
+       * Renders the temporary pending hex row for residual (< 16) bytes.
+       */
+      function updatePendingHexRow() {
+        const existing = document.getElementById("hex-pending-row");
+        if (existing) existing.remove();
+
+        if (hexRemainder.length === 0 || !hexContainer) return;
+
+        const offsetStr = hexOffset.toString(16).padStart(6, "0").toUpperCase();
+        let hexStr = "";
+        let asciiStr = "";
+
+        for (let j = 0; j < 16; j++) {
+          if (j < hexRemainder.length) {
+            const c = hexRemainder[j];
+            hexStr += c.toString(16).padStart(2, "0").toUpperCase() + " ";
+            asciiStr += (c >= 32 && c <= 126) ? String.fromCharCode(c) : ".";
+          } else {
+            hexStr += "   ";
+          }
+        }
+
+        const pendingHtml = `<div id="hex-pending-row" class="hex-row hex-row-pending"><span class="hex-offset">${offsetStr}</span><span class="hex-bytes">${hexStr}</span><span class="hex-ascii">${escapeHtml(asciiStr)}</span></div>`;
+        hexContainer.insertAdjacentHTML("beforeend", pendingHtml);
+      }
+
+      /**
+       * Batched trimming of hex inspector rows to avoid DOM churn.
+       */
+      function pruneHexRows() {
+        if (!hexContainer) return;
+        const maxRows = 2000;
+        const childCount = hexContainer.children.length;
+        if (childCount > maxRows + 200) {
+          const toRemove = childCount - maxRows;
+          for (let i = 0; i < toRemove; i++) {
+            if (hexContainer.firstChild && /** @type {HTMLElement} */ (hexContainer.firstChild).id !== "hex-pending-row") {
+              hexContainer.removeChild(hexContainer.firstChild);
+            }
+          }
+        }
+      }
+
+      /**
+       * Appends incoming bytes to the Hex Inspector with strict 16-byte alignment.
        * @param {Uint8Array} bytes - Raw byte array to format.
-       * @returns {void}
        */
       function appendHexDump(bytes) {
-        if (!hexContainer) return;
-        const chunkSize = 16;
-        let html = "";
+        if (!hexContainer || bytes.length === 0) return;
 
-        for (let i = 0; i < bytes.length; i += chunkSize) {
-          const slice = bytes.slice(i, i + chunkSize);
+        let combined;
+        if (hexRemainder.length > 0) {
+          combined = new Uint8Array(hexRemainder.length + bytes.length);
+          combined.set(hexRemainder, 0);
+          combined.set(bytes, hexRemainder.length);
+        } else {
+          combined = bytes;
+        }
+
+        const chunkSize = 16;
+        const fullBytesCount = Math.floor(combined.length / chunkSize) * chunkSize;
+
+        if (fullBytesCount === 0) {
+          hexRemainder = new Uint8Array(combined);
+          updatePendingHexRow();
+          return;
+        }
+
+        const fullBytes = combined.subarray(0, fullBytesCount);
+        hexRemainder = new Uint8Array(combined.subarray(fullBytesCount));
+
+        const pendingRow = document.getElementById("hex-pending-row");
+        if (pendingRow) pendingRow.remove();
+
+        let html = "";
+        for (let i = 0; i < fullBytes.length; i += chunkSize) {
+          const slice = fullBytes.subarray(i, i + chunkSize);
           const offsetStr = hexOffset.toString(16).padStart(6, "0").toUpperCase();
-          hexOffset += slice.length;
+          hexOffset += 16;
 
           let hexStr = "";
           let asciiStr = "";
 
-          for (let j = 0; j < chunkSize; j++) {
-            if (j < slice.length) {
-              hexStr += slice[j].toString(16).padStart(2, "0").toUpperCase() + " ";
-              const c = slice[j];
-              asciiStr += (c >= 32 && c <= 126) ? String.fromCharCode(c) : ".";
-            } else {
-              hexStr += "   ";
-            }
+          for (let j = 0; j < 16; j++) {
+            const c = slice[j];
+            hexStr += c.toString(16).padStart(2, "0").toUpperCase() + " ";
+            asciiStr += (c >= 32 && c <= 126) ? String.fromCharCode(c) : ".";
           }
 
           html += `<div class="hex-row"><span class="hex-offset">${offsetStr}</span><span class="hex-bytes">${hexStr}</span><span class="hex-ascii">${escapeHtml(asciiStr)}</span></div>`;
         }
 
         hexContainer.insertAdjacentHTML("beforeend", html);
+        updatePendingHexRow();
+        pruneHexRows();
 
-        // Trim hex view scrollback to prevent unbounded DOM growth
-        const maxHexRows = 10000;
-        while (hexContainer.children.length > maxHexRows) {
-          hexContainer.removeChild(hexContainer.firstChild);
+        if (chkAutoScroll && chkAutoScroll.checked) {
+          hexContainer.scrollTop = hexContainer.scrollHeight;
+        }
+      }
+
+      /**
+       * Flushes all buffered byte chunks into the Hex Inspector DOM as a unified batch.
+       */
+      function flushHexBuffer() {
+        if (hexBuffer.length === 0 || !hexContainer) return;
+        const chunks = hexBuffer;
+        hexBuffer = [];
+        hexBufferTotalBytes = 0;
+
+        let totalLen = 0;
+        for (let i = 0; i < chunks.length; i++) totalLen += chunks[i].length;
+        const merged = new Uint8Array(totalLen);
+        let pos = 0;
+        for (let i = 0; i < chunks.length; i++) {
+          merged.set(chunks[i], pos);
+          pos += chunks[i].length;
+        }
+        appendHexDump(merged);
+      }
+
+      /**
+       * Buffers incoming bytes and renders hex dump using throttled requestAnimationFrame.
+       * @param {Uint8Array} bytes - Raw received byte array.
+       */
+      function queueHexBytes(bytes) {
+        hexBuffer.push(bytes);
+        hexBufferTotalBytes += bytes.length;
+
+        while (hexBufferTotalBytes > MAX_HEX_BUFFER_BYTES && hexBuffer.length > 1) {
+          const dropped = hexBuffer.shift();
+          if (dropped) {
+            hexBufferTotalBytes -= dropped.length;
+            hexOffset += dropped.length;
+          }
         }
 
-        if (chkAutoScroll.checked) {
-          hexContainer.scrollTop = hexContainer.scrollHeight;
+        if (isHexActive && !hexRenderScheduled) {
+          hexRenderScheduled = true;
+          requestAnimationFrame(() => {
+            hexRenderScheduled = false;
+            flushHexBuffer();
+          });
         }
       }
 
@@ -1487,52 +2351,211 @@
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
       }
 
+      /* =========================================================================
+       * Asynchronous FIFO Serial Write Queue
+       * ========================================================================= */
+
       /**
-       * Writes data (string or Uint8Array) to the active serial port.
-       * @async
-       * @param {string|Uint8Array} data - Data to transmit.
+       * Processes items in the write FIFO queue sequentially.
+       * Prevents lock contention on port.writable.getWriter().
        * @returns {Promise<void>}
        */
-      async function writeToSerial(data) {
-        if (!port || !port.writable || !isConnected || isClosing) {
-          if (!isConnected) {
-            if (term) term.writeln("\x1b[33m[Warning: Serial port not connected. Click [Connect] first]\x1b[0m");
-          }
-          return;
-        }
+      async function processWriteQueue() {
+        if (isWriting) return;
+        isWriting = true;
 
-        /** @type {WritableStreamDefaultWriter<Uint8Array>|null} */
-        let writer = null;
+        writeLoopPromise = (async () => {
+          let writer = null;
+          try {
+            while (writeQueue.length > 0) {
+              if (!port || !port.writable || isClosing) {
+                while (writeQueue.length > 0) {
+                  const item = writeQueue.shift();
+                  if (item) item.reject(new Error("Serial port closed or not writable"));
+                }
+                break;
+              }
+
+              if (!writer) {
+                writer = port.writable.getWriter();
+                currentWriter = writer;
+              }
+
+              const item = writeQueue.shift();
+              if (!item) continue;
+
+              try {
+                const bytes = typeof item.data === "string" ? textEncoder.encode(item.data) : item.data;
+                await writer.write(bytes);
+                txByteCount += bytes.length;
+                scheduleStatsUpdate();
+                item.resolve();
+              } catch (err) {
+                console.error("Write error:", err);
+                item.reject(err);
+              }
+            }
+          } catch (err) {
+            console.error("Write queue loop error:", err);
+          } finally {
+            if (writer) {
+              try {
+                writer.releaseLock();
+              } catch (e) {}
+            }
+            currentWriter = null;
+          }
+        })();
+
         try {
-          writer = port.writable.getWriter();
-          /** @type {Uint8Array} */
-          let bytes;
-
-          if (typeof data === "string") {
-            bytes = textEncoder.encode(data);
-          } else {
-            bytes = data;
-          }
-
-          await writer.write(bytes);
-          txByteCount += bytes.length;
-          scheduleStatsUpdate();
-        } catch (err) {
-          console.error("Write error:", err);
+          await writeLoopPromise;
         } finally {
-          if (writer) {
-            try {
-              writer.releaseLock();
-            } catch (e) {}
+          writeLoopPromise = null;
+          isWriting = false;
+          if (writeQueue.length > 0 && port && port.writable && !isClosing) {
+            processWriteQueue();
           }
         }
       }
 
       /**
+       * Writes data (string or Uint8Array) to the active serial port using an asynchronous FIFO queue.
+       * @param {string|Uint8Array} data - Data to transmit.
+       * @returns {Promise<void>}
+       */
+      function writeToSerial(data) {
+        if (!isConnected && !isClosing) {
+          if (term) term.writeln("\x1b[33m[Warning: Serial port not connected. Click [Connect] first]\x1b[0m");
+          return Promise.resolve();
+        }
+        if (!port || !port.writable || isClosing) {
+          return Promise.resolve();
+        }
+        if (typeof data === "string" ? data.length === 0 : data.byteLength === 0) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve, reject) => {
+          writeQueue.push({ data, resolve, reject });
+          processWriteQueue();
+        });
+      }
+
+      /* =========================================================================
+       * Command Input Bar & History Navigation
+       * ========================================================================= */
+
+      if (btnCmdMode) {
+        btnCmdMode.addEventListener("click", () => {
+          if (cmdMode === "ASCII") {
+            cmdMode = "HEX";
+            btnCmdMode.textContent = "HEX";
+            btnCmdMode.classList.add("hex-mode");
+            if (inputCommand) {
+              inputCommand.placeholder = "Enter hex bytes: e.g. 01 03 00 00 00 02 C4 0B (Enter to send)";
+            }
+          } else {
+            cmdMode = "ASCII";
+            btnCmdMode.textContent = "ASCII";
+            btnCmdMode.classList.remove("hex-mode");
+            if (inputCommand) {
+              inputCommand.placeholder = "Type command to send... (Enter to send, ↑/↓ for history)";
+            }
+          }
+          if (inputCommand) inputCommand.focus();
+        });
+      }
+
+      /**
+       * Transmits command entered in bottom command input bar.
+       */
+      function sendCommandLine() {
+        if (!inputCommand) return;
+        const raw = inputCommand.value.trim();
+        if (!raw) return;
+
+        if (cmdMode === "HEX") {
+          const hexClean = raw.replace(/0x/gi, "").replace(/[^0-9a-fA-F]/g, "");
+          if (hexClean.length === 0 || hexClean.length % 2 !== 0) {
+            alert("Invalid HEX string. Please enter an even number of hex digits (e.g. 01 03 00 02 or 0x01, 0x03).");
+            return;
+          }
+          const bytes = new Uint8Array(hexClean.length / 2);
+          for (let i = 0; i < hexClean.length; i += 2) {
+            bytes[i / 2] = parseInt(hexClean.slice(i, i + 2), 16);
+          }
+          writeToSerial(bytes);
+          if (chkLocalEcho && chkLocalEcho.checked && term) {
+            term.writeln(`\x1b[33m[TX HEX] > ${raw}\x1b[0m`);
+          }
+        } else {
+          let eol = "";
+          const eolSetting = selectCmdEol ? selectCmdEol.value : "default";
+          if (eolSetting === "default") {
+            eol = getNewlineSequence();
+          } else if (eolSetting === "cr") {
+            eol = "\r";
+          } else if (eolSetting === "lf") {
+            eol = "\n";
+          } else if (eolSetting === "crlf") {
+            eol = "\r\n";
+          }
+          const payload = raw + eol;
+          writeToSerial(payload);
+          if (chkLocalEcho && chkLocalEcho.checked && term) {
+            term.writeln(`\x1b[36m[TX] > ${raw}\x1b[0m`);
+          }
+        }
+
+        if (cmdHistory[cmdHistory.length - 1] !== raw) {
+          cmdHistory.push(raw);
+          saveCmdHistory(cmdHistory);
+        }
+        cmdHistoryIndex = -1;
+        cmdTempInput = "";
+        inputCommand.value = "";
+      }
+
+      if (btnSendCmd) btnSendCmd.addEventListener("click", sendCommandLine);
+
+      if (inputCommand) {
+        inputCommand.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            sendCommandLine();
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (cmdHistory.length === 0) return;
+            if (cmdHistoryIndex === -1) {
+              cmdTempInput = inputCommand.value;
+              cmdHistoryIndex = cmdHistory.length - 1;
+            } else if (cmdHistoryIndex > 0) {
+              cmdHistoryIndex--;
+            }
+            inputCommand.value = cmdHistory[cmdHistoryIndex] || "";
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (cmdHistoryIndex === -1) return;
+            if (cmdHistoryIndex < cmdHistory.length - 1) {
+              cmdHistoryIndex++;
+              inputCommand.value = cmdHistory[cmdHistoryIndex] || "";
+            } else {
+              cmdHistoryIndex = -1;
+              inputCommand.value = cmdTempInput;
+            }
+          }
+        });
+      }
+
+      /* =========================================================================
+       * Quick Macros Toolbar
+       * ========================================================================= */
+
+      /**
        * Renders the quick macro chip buttons in the sub-toolbar.
-       * @returns {void}
        */
       function renderMacros() {
+        if (!macrosList) return;
         macrosList.innerHTML = "";
         macros.forEach((m, idx) => {
           const chip = document.createElement("div");
@@ -1544,14 +2567,15 @@
             if (target.classList.contains("macro-del")) {
               e.stopPropagation();
               macros.splice(idx, 1);
-              localStorage.setItem("serial_macros", JSON.stringify(macros));
+              saveMacros(macros);
               renderMacros();
             } else {
               const nl = getNewlineSequence();
-              const payload = m.cmd + nl;
+              const parsedCmd = parseEscapes(m.cmd);
+              const payload = parsedCmd + (parsedCmd.endsWith("\r") || parsedCmd.endsWith("\n") ? "" : nl);
               writeToSerial(payload);
-              if (chkLocalEcho.checked && term) {
-                term.writeln(`\x1b[36m[MACRO] > ${m.cmd}\x1b[0m`);
+              if (chkLocalEcho && chkLocalEcho.checked && term) {
+                term.writeln(`\x1b[36m[MACRO] > ${m.label} (${m.cmd})\x1b[0m`);
               }
               if (term) term.focus();
             }
@@ -1562,20 +2586,25 @@
       }
       renderMacros();
 
-      btnAddMacro.addEventListener("click", () => {
-        const label = prompt("Enter Macro Name / Label (e.g. Status):");
-        if (!label) return;
-        const cmd = prompt(`Enter command for "${label}":`, label);
-        if (cmd !== null) {
-          macros.push({ label, cmd });
-          localStorage.setItem("serial_macros", JSON.stringify(macros));
-          renderMacros();
-        }
-      });
+      if (btnAddMacro) {
+        btnAddMacro.addEventListener("click", () => {
+          const label = prompt("Enter Macro Name / Label (e.g. Status, Reset):");
+          if (!label) return;
+          const cmd = prompt(`Enter command string for "${label}" (supports \\r, \\n, \\x03):`, label);
+          if (cmd !== null) {
+            macros.push({ label, cmd });
+            saveMacros(macros);
+            renderMacros();
+          }
+        });
+      }
+
+      /* =========================================================================
+       * Hardware Pins & Signal Control
+       * ========================================================================= */
 
       /**
        * Toggles hardware signals (DTR / RTS) on the active serial port.
-       * @async
        * @param {'dataTerminalReady'|'requestToSend'} signal - Pin signal identifier.
        * @param {boolean} currentState - Current state of the pin.
        * @returns {Promise<boolean>} New signal state.
@@ -1584,7 +2613,7 @@
         if (!port || !isConnected || isClosing) return currentState;
         try {
           const newState = !currentState;
-          /** @type {SerialOutputSignals} */
+          /** @type {any} */
           const signals = {};
           signals[signal] = newState;
           await port.setSignals(signals);
@@ -1609,7 +2638,7 @@
         if (term) term.focus();
       });
 
-      // ESP32 / Arduino Hardware Reset (pulse DTR & RTS)
+      // ESP32 Hardware Auto-Reset Pulse (RTS/DTR sequence)
       btnResetEsp.addEventListener("click", async () => {
         if (!port || !isConnected || isClosing) return;
         try {
@@ -1618,14 +2647,32 @@
           await port.setSignals({ dataTerminalReady: true, requestToSend: false });
           await new Promise((r) => setTimeout(r, 50));
           await port.setSignals({ dataTerminalReady: false, requestToSend: false });
-          if (term) term.writeln("\r\n\x1b[33m⚡ Reset pulse sent to device\x1b[0m\r\n");
+          if (term) term.writeln("\r\n\x1b[33m⚡ Reset pulse sent to ESP32 device\x1b[0m\r\n");
           if (term) term.focus();
         } catch (err) {
-          console.error("Reset failed:", err);
+          console.error("ESP32 Reset failed:", err);
         }
       });
 
-      // Break signal (requires Chromium 110+; non-standard in Web Serial spec)
+      // Arduino Hardware DTR Reset Pulse
+      if (btnResetArduino) {
+        btnResetArduino.addEventListener("click", async () => {
+          if (!port || !isConnected || isClosing) return;
+          try {
+            await port.setSignals({ dataTerminalReady: false });
+            await new Promise((r) => setTimeout(r, 100));
+            await port.setSignals({ dataTerminalReady: true });
+            await new Promise((r) => setTimeout(r, 100));
+            await port.setSignals({ dataTerminalReady: false });
+            if (term) term.writeln("\r\n\x1b[33m⚡ DTR reset pulse sent to Arduino\x1b[0m\r\n");
+            if (term) term.focus();
+          } catch (err) {
+            console.error("Arduino Reset failed:", err);
+          }
+        });
+      }
+
+      // Break signal
       btnBreak.addEventListener("click", async () => {
         if (!port || !isConnected || isClosing) return;
         try {
@@ -1640,7 +2687,98 @@
         }
       });
 
-      // View Switcher (Terminal / Hex)
+      /* =========================================================================
+       * File Transfer / Streaming Engine
+       * ========================================================================= */
+
+      let fileTransferCancelled = false;
+
+      if (btnSendFile && fileInputHidden) {
+        btnSendFile.addEventListener("click", () => {
+          if (!isConnected || isClosing) {
+            alert("Please connect to a serial port first.");
+            return;
+          }
+          fileInputHidden.value = "";
+          fileInputHidden.click();
+        });
+
+        fileInputHidden.addEventListener("change", (e) => {
+          const target = /** @type {HTMLInputElement} */ (e.target);
+          const file = target.files && target.files[0];
+          if (!file) return;
+
+          const chunkSize = 256;
+          const totalBytes = file.size;
+          let sentBytes = 0;
+          fileTransferCancelled = false;
+
+          if (modalFileTransfer) modalFileTransfer.classList.add("active");
+          if (transferTitle) transferTitle.textContent = "Sending File...";
+          if (transferFilename) transferFilename.textContent = `${file.name} (${formatBytes(totalBytes)})`;
+          if (transferProgressBar) transferProgressBar.style.width = "0%";
+          if (transferBytes) transferBytes.textContent = `0 / ${formatBytes(totalBytes)} (0%)`;
+          if (transferSpeed) transferSpeed.textContent = "0 KB/s";
+
+          const fileReader = new FileReader();
+          fileReader.onload = async () => {
+            const buffer = /** @type {ArrayBuffer} */ (fileReader.result);
+            const uint8 = new Uint8Array(buffer);
+            const startTime = performance.now();
+
+            try {
+              for (let i = 0; i < uint8.length; i += chunkSize) {
+                if (fileTransferCancelled || !isConnected || isClosing) {
+                  if (term) term.writeln("\r\n\x1b[31m✗ File transfer cancelled\x1b[0m\r\n");
+                  break;
+                }
+
+                const chunk = uint8.subarray(i, Math.min(i + chunkSize, uint8.length));
+                await writeToSerial(chunk);
+                sentBytes += chunk.length;
+
+                const percent = Math.floor((sentBytes / totalBytes) * 100);
+                if (transferProgressBar) transferProgressBar.style.width = `${percent}%`;
+                if (transferBytes) transferBytes.textContent = `${formatBytes(sentBytes)} / ${formatBytes(totalBytes)} (${percent}%)`;
+
+                const elapsedSec = (performance.now() - startTime) / 1000;
+                if (elapsedSec > 0.1 && transferSpeed) {
+                  const speedKB = ((sentBytes / 1024) / elapsedSec).toFixed(1);
+                  transferSpeed.textContent = `${speedKB} KB/s`;
+                }
+              }
+
+              if (!fileTransferCancelled && sentBytes >= totalBytes) {
+                if (term) {
+                  term.writeln(`\r\n\x1b[32m✔ File sent successfully: ${file.name} (${formatBytes(totalBytes)})\x1b[0m\r\n`);
+                }
+              }
+            } catch (err) {
+              console.error("File send error:", err);
+              if (term) term.writeln(`\r\n\x1b[31m✗ File transfer error: ${/** @type {any} */ (err).message}\x1b[0m\r\n`);
+            } finally {
+              if (modalFileTransfer) modalFileTransfer.classList.remove("active");
+              if (term) term.focus();
+            }
+          };
+
+          fileReader.readAsArrayBuffer(file);
+        });
+      }
+
+      if (btnCancelTransfer && modalFileTransfer) {
+        btnCancelTransfer.addEventListener("click", () => {
+          fileTransferCancelled = true;
+          modalFileTransfer.classList.remove("active");
+          if (term) term.focus();
+        });
+      }
+
+      /* =========================================================================
+       * View Navigation, Screen Clear & Log Export
+       * ========================================================================= */
+
+      // View Switcher (Terminal / Hex Inspector)
       document.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
@@ -1649,8 +2787,19 @@
           const view = /** @type {HTMLElement} */ (btn).dataset.view;
           const panel = document.getElementById(`panel-${view}`);
           if (panel) panel.classList.add("active");
+
+          if (view === "hex") {
+            isHexActive = true;
+            flushHexBuffer();
+            if (chkAutoScroll && chkAutoScroll.checked && hexContainer) {
+              hexContainer.scrollTop = hexContainer.scrollHeight;
+            }
+          } else {
+            isHexActive = false;
+          }
+
           if (view === "terminal" && term) {
-            fitAddon.fit();
+            safeFit();
             term.scrollToBottom();
             term.focus();
           }
@@ -1661,8 +2810,12 @@
       btnClear.addEventListener("click", () => {
         if (term) term.clear();
         if (hexContainer) hexContainer.innerHTML = "";
+        hexBuffer = [];
+        hexBufferTotalBytes = 0;
+        hexRemainder = new Uint8Array(0);
         hexOffset = 0;
         logBuffer = "";
+        atLineStart = true;
         rxByteCount = 0;
         txByteCount = 0;
         updateStats();
@@ -1671,12 +2824,31 @@
 
       // Export Log
       btnExport.addEventListener("click", () => {
-        const blob = new Blob([logBuffer], { type: "text/plain;charset=utf-8" });
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        let contentToDownload = "";
+        let filename = "";
+
+        if (isHexActive && hexContainer) {
+          // Export plain text format of active hex rows
+          filename = `serial_hexdump_${timestamp}.txt`;
+          const rows = hexContainer.querySelectorAll(".hex-row");
+          rows.forEach((r) => {
+            const offset = r.querySelector(".hex-offset")?.textContent || "";
+            const bytes = r.querySelector(".hex-bytes")?.textContent || "";
+            const ascii = r.querySelector(".hex-ascii")?.textContent || "";
+            contentToDownload += `${offset}  ${bytes} |${ascii}|\n`;
+          });
+        } else {
+          // Export clean plain-text terminal log (stripped of ANSI escape codes)
+          filename = `serial_log_${timestamp}.txt`;
+          contentToDownload = stripAnsi(logBuffer);
+        }
+
+        const blob = new Blob([contentToDownload], { type: "text/plain;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
         a.href = url;
-        a.download = `serial_log_${timestamp}.txt`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1684,44 +2856,144 @@
         if (term) term.focus();
       });
 
-      // Settings Modal
+      /* =========================================================================
+       * Settings Modal Event Handlers
+       * ========================================================================= */
+
       btnSettings.addEventListener("click", () => {
-        modalSettings.classList.add("active");
+        syncSettingsToUI();
+        if (modalSettings) modalSettings.classList.add("active");
+        if (cfgBaud) cfgBaud.focus();
       });
+
       btnCloseModal.addEventListener("click", () => {
-        modalSettings.classList.remove("active");
+        if (modalSettings) modalSettings.classList.remove("active");
         if (term) term.focus();
       });
-      modalSettings.addEventListener("click", (e) => {
-        if (e.target === modalSettings) {
-          modalSettings.classList.remove("active");
-          if (term) term.focus();
+
+      if (modalSettings) {
+        modalSettings.addEventListener("click", (e) => {
+          if (e.target === modalSettings) {
+            modalSettings.classList.remove("active");
+            if (term) term.focus();
+          }
+        });
+
+        modalSettings.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && /** @type {HTMLElement} */ (e.target).tagName !== "TEXTAREA" && /** @type {HTMLElement} */ (e.target).tagName !== "BUTTON") {
+            e.preventDefault();
+            btnApplySettings.click();
+          }
+        });
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (modalSettings && modalSettings.classList.contains("active")) {
+            modalSettings.classList.remove("active");
+            if (term) term.focus();
+          }
+          if (modalFileTransfer && modalFileTransfer.classList.contains("active")) {
+            fileTransferCancelled = true;
+            modalFileTransfer.classList.remove("active");
+            if (term) term.focus();
+          }
         }
       });
 
       btnApplySettings.addEventListener("click", () => {
-        const val = cfgBaud.value;
-        if (![...baudSelect.options].some((o) => o.value === val)) {
-          baudSelect.value = "custom";
-        } else {
-          baudSelect.value = val;
+        const baudVal = parseInt(cfgBaud.value, 10);
+        if (isNaN(baudVal) || baudVal <= 0 || baudVal > 4000000) {
+          alert("Please enter a valid baud rate between 1 and 4,000,000.");
+          if (cfgBaud) cfgBaud.focus();
+          return;
         }
-        modalSettings.classList.remove("active");
+
+        appSettings.baudRate = baudVal;
+        appSettings.dataBits = parseInt(cfgDataBits.value, 10) || 8;
+        appSettings.stopBits = parseInt(cfgStopBits.value, 10) || 1;
+        appSettings.parity = /** @type {any} */ (cfgParity.value || "none");
+        appSettings.flowControl = /** @type {any} */ (cfgFlow.value || "none");
+        appSettings.bufferSize = parseInt(cfgBuffer.value, 10) || 16384;
+        appSettings.newlineMode = /** @type {any} */ (cfgNewlineMode.value || "cr");
+        appSettings.backspaceMode = /** @type {any} */ (cfgBackspaceMode.value || "bs");
+        appSettings.autoReconnect = cfgAutoReconnect ? cfgAutoReconnect.checked : false;
+
+        saveSettings(appSettings);
+        syncSettingsToUI();
+
+        if (modalSettings) modalSettings.classList.remove("active");
         if (term) term.focus();
       });
 
+      if (btnForgetPort) {
+        btnForgetPort.addEventListener("click", async () => {
+          if (!port) return;
+          if (confirm("Revoke browser access to this serial port?")) {
+            const portToForget = port;
+            await disconnectSerial();
+            if (portToForget && typeof portToForget.forget === "function") {
+              try {
+                await portToForget.forget();
+                if (term) term.writeln("\r\n\x1b[33mPort permission revoked via port.forget()\x1b[0m\r\n");
+              } catch (e) {
+                console.warn("port.forget error:", e);
+              }
+            }
+            if (modalSettings) modalSettings.classList.remove("active");
+          }
+        });
+      }
+
       baudSelect.addEventListener("change", () => {
         if (baudSelect.value === "custom") {
-          modalSettings.classList.add("active");
+          if (modalSettings) modalSettings.classList.add("active");
+          if (cfgBaud) cfgBaud.focus();
         } else {
-          cfgBaud.value = baudSelect.value;
+          const val = parseInt(baudSelect.value, 10);
+          appSettings.baudRate = val;
+          if (cfgBaud) cfgBaud.value = String(val);
+          saveSettings(appSettings);
         }
       });
+
+      // Checkbox changes persisted to settings
+      if (chkTimestamp) {
+        chkTimestamp.addEventListener("change", () => {
+          appSettings.timestamp = chkTimestamp.checked;
+          saveSettings(appSettings);
+        });
+      }
+      if (chkAutoScroll) {
+        chkAutoScroll.addEventListener("change", () => {
+          appSettings.autoScroll = chkAutoScroll.checked;
+          saveSettings(appSettings);
+        });
+      }
+      if (chkLocalEcho) {
+        chkLocalEcho.addEventListener("change", () => {
+          appSettings.localEcho = chkLocalEcho.checked;
+          saveSettings(appSettings);
+        });
+      }
 
       btnConnect.addEventListener("click", connectSerial);
       btnDisconnect.addEventListener("click", disconnectSerial);
 
+      // Startup auto-reconnect if enabled
+      if ("serial" in navigator && appSettings.autoReconnect) {
+        navigator.serial.getPorts().then((ports) => {
+          if (ports.length > 0 && !isConnected && !isClosing) {
+            console.log("Auto-reconnecting to remembered port:", ports[0]);
+            connectSerialPort(ports[0]);
+          }
+        }).catch((err) => {
+          console.warn("getPorts error:", err);
+        });
+      }
+
     })();
+
   </script>
 </body>
 </html>
